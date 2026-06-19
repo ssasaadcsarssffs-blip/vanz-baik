@@ -1,675 +1,646 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-    scroll-behavior:smooth;
+/* ==========================================================================
+   0. VARIABEL WARNA & TEMA (GLOBAL VARIABLES)
+   ========================================================================== */
+:root {
+    --bg-color: #0f0f11;
+    --text-color: #f3f4f6;
+    --card-bg: #1e1e24;
+    --accent-color: #3b82f6;
+    --sub-text: #9ca3af;
+    --border-color: #2e2e38;
+    --loading-bg: #050505;
 }
 
-:root{
-    --bg:#080812;
-    --card:rgba(255,255,255,.05);
-    --border:rgba(255,255,255,.08);
-
-    --purple:#8b5cf6;
-    --pink:#ec4899;
-    --cyan:#22d3ee;
-
-    --text:#ffffff;
-    --text2:#cfcfcf;
+[data-theme="light"] {
+    --bg-color: #f4f4f6;
+    --text-color: #111827;
+    --card-bg: #ffffff;
+    --accent-color: #2563eb;
+    --sub-text: #4b5563;
+    --border-color: #e5e7eb;
+    --loading-bg: #fafafa;
 }
 
-body{
-
-    background:
-    linear-gradient(
-        180deg,
-        #070710,
-        #0d1024,
-        #090913
-    );
-
-    color:white;
-
-    overflow-x:hidden;
-
-    min-height:100vh;
+/* ==========================================================================
+   1. RESET & STANDARISASI DASAR (CSS RESET)
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    /* Transisi global hanya untuk warna background dan teks saja */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* ========================= */
-/* MOON */
-/* ========================= */
-
-.moon{
-
-    position:fixed;
-
-    width:500px;
-    height:500px;
-
-    border-radius:50%;
-
-    top:-120px;
-    right:-120px;
-
-    background:
-    radial-gradient(
-        circle,
-        rgba(255,255,255,.9),
-        rgba(139,92,246,.4),
-        transparent 70%
-    );
-
-    filter:blur(40px);
-
-    z-index:-3;
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    min-height: 100vh;
 }
 
-/* ========================= */
-/* BLOBS */
-/* ========================= */
-
-.blob{
-
-    position:fixed;
-
-    border-radius:50%;
-
-    filter:blur(120px);
-
-    z-index:-2;
+/* ==========================================================================
+   2. INTERFACE UTAMA, NAVIGASI & KONTROL ATAS
+   ========================================================================== */
+.top-controls {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    z-index: 100;
 }
 
-.blob1{
-
-    width:300px;
-    height:300px;
-
-    background:#8b5cf6;
-
-    top:15%;
-    left:-100px;
+.nav-menu {
+    display: flex;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 4px;
+    border-radius: 30px;
 }
 
-.blob2{
-
-    width:250px;
-    height:250px;
-
-    background:#ec4899;
-
-    bottom:10%;
-    right:-80px;
+.nav-btn {
+    background: transparent;
+    border: none;
+    color: var(--sub-text);
+    padding: 8px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
-.blob3{
-
-    width:250px;
-    height:250px;
-
-    background:#22d3ee;
-
-    top:60%;
-    left:40%;
+.nav-btn.active {
+    background: var(--accent-color);
+    color: #ffffff;
 }
 
-/* ========================= */
-/* NAVBAR */
-/* ========================= */
-
-.navbar{
-
-    position:fixed;
-
-    top:20px;
-    left:50%;
-
-    transform:translateX(-50%);
-
-    width:92%;
-    max-width:1200px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:15px 25px;
-
-    backdrop-filter:blur(20px);
-
-    background:rgba(255,255,255,.04);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:20px;
-
-    z-index:999;
+.theme-toggle {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.logo{
-
-    font-size:1.2rem;
-    font-weight:700;
+/* Sistem Ganti Halaman */
+.page-section { 
+    display: none; 
+}
+.page-section.active { 
+    display: block; 
 }
 
-.navbar ul{
-
-    display:flex;
-    gap:25px;
-
-    list-style:none;
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 100px 20px;
 }
 
-.navbar a{
-
-    color:white;
-
-    text-decoration:none;
-
-    transition:.3s;
+/* ==========================================================================
+   3. ANIMASI 3D LOADING SCREEN (CUBE EFFECT)
+   ========================================================================== */
+#loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--loading-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
 }
 
-.navbar a:hover{
-
-    color:var(--cyan);
+#loading-screen.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
-/* ========================= */
-/* HERO */
-/* ========================= */
-
-.hero{
-
-    min-height:100vh;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
-
-    text-align:center;
-
-    padding:120px 20px;
+.cube-wrapper {
+    width: 80px;
+    height: 80px;
+    perspective: 400px;
+    margin-bottom: 30px;
 }
 
-.hero-content{
-
-    width:100%;
-    max-width:900px;
+.cube {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: rotateCube 4s infinite linear;
 }
 
-.avatar-box{
-
-    width:180px;
-    height:180px;
-
-    margin:auto;
-    margin-bottom:25px;
-
-    border-radius:50%;
-
-    overflow:hidden;
-
-    border:4px solid rgba(255,255,255,.1);
-
-    box-shadow:
-    0 0 40px rgba(139,92,246,.4);
+.cube-face {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
 }
 
-.avatar-box img{
-
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
+body[data-theme="light"] .cube-face {
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px solid rgba(0, 0, 0, 0.4);
 }
 
-.badge{
+.front  { transform: translateZ(40px); }
+.back   { transform: rotateY(180deg) translateZ(40px); }
+.left   { transform: rotateY(-90deg) translateZ(40px); }
+.right  { transform: rotateY(90deg) translateZ(40px); }
+.top    { transform: rotateX(90deg) translateZ(40px); }
+.bottom { transform: rotateX(-90deg) translateZ(40px); }
 
-    display:inline-block;
-
-    padding:10px 18px;
-
-    border-radius:999px;
-
-    background:rgba(255,255,255,.05);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    margin-bottom:20px;
+@keyframes rotateCube {
+    0% { transform: rotateX(0deg) rotateY(0deg); }
+    100% { transform: rotateX(360deg) rotateY(360deg); }
 }
 
-.hero h1{
-
-    font-size:5rem;
-
-    line-height:1.1;
+.loading-text { 
+    font-size: 24px; 
+    font-weight: 700; 
+    letter-spacing: 4px; 
+    margin-bottom: 10px; 
 }
 
-.hero h1 span{
-
-    background:
-    linear-gradient(
-        90deg,
-        var(--purple),
-        var(--cyan)
-    );
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+.loading-sub { 
+    font-size: 13px; 
+    color: var(--sub-text); 
 }
 
-.hero p{
-
-    margin-top:20px;
-
-    color:var(--text2);
-
-    font-size:1.2rem;
-
-    min-height:35px;
+/* ==========================================================================
+   4. PREMIUM HERO SECTION LAYOUT
+   ========================================================================== */
+.fw-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 780px;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
-.hero-buttons{
-
-    margin-top:35px;
-
-    display:flex;
-
-    justify-content:center;
-
-    gap:15px;
+.fw-hero-bg-text {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 105px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.02);
+    white-space: nowrap;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
 }
 
-.btn-main{
-
-    padding:15px 30px;
-
-    border-radius:15px;
-
-    text-decoration:none;
-
-    color:white;
-
-    background:
-    linear-gradient(
-        135deg,
-        var(--purple),
-        var(--pink)
-    );
-
-    transition:.3s;
+[data-theme="light"] .fw-hero-bg-text { 
+    color: rgba(0, 0, 0, 0.02); 
 }
 
-.btn-main:hover{
-
-    transform:translateY(-5px);
+.fw-hero-wrap { 
+    position: relative; 
+    z-index: 1; 
 }
 
-.btn-outline{
-
-    padding:15px 30px;
-
-    border-radius:15px;
-
-    text-decoration:none;
-
-    color:white;
-
-    border:1px solid rgba(255,255,255,.1);
-
-    background:rgba(255,255,255,.03);
-
-    transition:.3s;
+.fw-hero-top {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--sub-text);
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.btn-outline:hover{
-
-    background:rgba(255,255,255,.08);
+.fw-profile-logo-wrap { 
+    margin-bottom: 15px; 
 }
 
-/* ========================= */
-/* SECTION */
-/* ========================= */
-
-.section{
-
-    padding:120px 20px;
-
-    width:100%;
-
-    max-width:1000px;
-
-    margin:auto;
+.fw-main-logo {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
-.section h2{
-
-    text-align:center;
-
-    margin-bottom:40px;
-
-    font-size:3rem;
+.fw-hero-display {
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
 }
 
-/* ========================= */
-/* SKILL */
-/* ========================= */
-
-.skill-card{
-
-    margin-bottom:25px;
+.fw-hero-line { 
+    display: block; 
 }
 
-.skill-top{
-
-    display:flex;
-    justify-content:space-between;
-
-    margin-bottom:10px;
+.fw-hero-line-italic {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--sub-text);
 }
 
-.progress{
-
-    height:20px;
-
-    background:#141424;
-
-    border-radius:999px;
-
-    overflow:hidden;
+.fw-hero-tagline { 
+    max-width: 480px; 
+    margin-bottom: 30px; 
 }
 
-.fill{
-
-    height:100%;
-    border-radius:999px;
+.fw-hero-role {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
 }
 
-.html{
-
-    width:87%;
-
-    background:
-    linear-gradient(
-        90deg,
-        #ff8a65,
-        #ff5722
-    );
+.fw-hero-sub { 
+    font-size: 15px; 
+    line-height: 1.6; 
+    color: var(--sub-text); 
 }
 
-.js{
-
-    width:97%;
-
-    background:
-    linear-gradient(
-        90deg,
-        #ffee58,
-        #ffd600
-    );
+.fw-hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--sub-text);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 25px;
+    margin-bottom: 40px;
 }
 
-.lua{
-
-    width:89%;
-
-    background:
-    linear-gradient(
-        90deg,
-        #42a5f5,
-        #1e88e5
-    );
+.fw-hero-status { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
 }
 
-/* ========================= */
-/* SOCIAL */
-/* ========================= */
-
-.social-grid{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(250px,1fr));
-
-    gap:20px;
+.fw-hero-dot { 
+    width: 8px; 
+    height: 8px; 
+    background: #22c55e; 
+    border-radius: 50%; 
+    display: inline-block; 
 }
 
-.social-card{
-
-    padding:30px;
-
-    border-radius:25px;
-
-    backdrop-filter:blur(15px);
-
-    background:var(--card);
-
-    border:1px solid var(--border);
-
-    text-align:center;
-
-    transition:.3s;
+.fw-hero-scroll { 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
 }
 
-.social-card:hover{
-
-    transform:translateY(-8px);
+/* ==========================================================================
+   5. INTERACTIVE SANDBOX & FISIKA LANYARD DRAG
+   ========================================================================== */
+.fw-lanyard-scene {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: var(--card-bg);
+    border: 1px dashed var(--border-color);
+    border-radius: 20px;
+    overflow: hidden;
 }
 
-/* ========================= */
-/* WA */
-/* ========================= */
-
-.wa-button{
-
-    display:block;
-
-    width:max-content;
-
-    margin:auto;
-
-    text-decoration:none;
-
-    color:white;
-
-    padding:16px 28px;
-
-    border-radius:15px;
-
-    background:#25D366;
-
-    font-weight:700;
-
-    transition:.3s;
+.sandbox-hint {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 11px;
+    color: var(--sub-text);
+    z-index: 5;
+    pointer-events: none;
 }
 
-.wa-button:hover{
-
-    transform:translateY(-5px);
+.fw-lanyard-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
 }
 
-/* ========================= */
-/* PROJECT */
-/* ========================= */
-
-.project-grid{
-
-    display:grid;
-
-    grid-template-columns:
-    repeat(auto-fit,minmax(300px,1fr));
-
-    gap:20px;
+.fw-strap-text { 
+    letter-spacing: 2px; 
+    text-transform: uppercase; 
 }
 
-.project-card{
-
-    padding:30px;
-
-    border-radius:25px;
-
-    backdrop-filter:blur(15px);
-
-    background:var(--card);
-
-    border:1px solid var(--border);
-
-    transition:.3s;
+/* KARTU ID BADGE PREMIUM (PENTING: Tanpa CSS Transition Koordinat) */
+.fw-avatar-card {
+    position: absolute;
+    width: 210px;
+    background: #e5e0d8;
+    color: #2c2b29;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    cursor: grab;
+    user-select: none;
+    z-index: 10;
+    /* CRITICAL: JANGAN PERNAH menambahkan transition top atau left di sini, 
+       karena akan membuat kalkulasi fisika pegas/letoy JS crash dan patah-patah! */
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
-.project-card:hover{
-
-    transform:translateY(-10px);
-
-    box-shadow:
-    0 0 25px rgba(139,92,246,.3);
+.fw-avatar-card:active { 
+    cursor: grabbing;
+    transform: scale(1.02);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
 }
 
-.project-card h3{
-
-    margin-bottom:10px;
+.fw-card-clip {
+    width: 30px;
+    height: 12px;
+    background: #a39a86;
+    margin: -16px auto 12px auto;
+    border-radius: 0 0 4px 4px;
+    border: 1px solid rgba(0,0,0,0.1);
 }
 
-.project-card p{
-
-    color:#ccc;
-
-    margin-bottom:20px;
+.fw-card-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    font-weight: 700;
+    color: #5a5854;
+    margin-bottom: 12px;
+    text-transform: uppercase;
 }
 
-.project-card a{
-
-    color:var(--cyan);
-
-    text-decoration:none;
+.fw-card-photo {
+    width: 100%;
+    height: 125px;
+    background: #1f1d18;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
 }
 
-/* ========================= */
-/* AI */
-/* ========================= */
-
-.ai-container{
-
-    background:rgba(255,255,255,.04);
-
-    border:1px solid rgba(255,255,255,.08);
-
-    border-radius:25px;
-
-    padding:20px;
+.fw-card-photo img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
 }
 
-.chat-box{
-
-    height:400px;
-
-    overflow-y:auto;
-
-    margin-bottom:15px;
+.fw-card-name { 
+    font-size: 18px; 
+    font-weight: 800; 
+    text-align: center; 
+    margin-bottom: 2px; 
+    letter-spacing: -0.5px; 
 }
 
-.ai-message{
-
-    background:#171727;
-
-    padding:15px;
-
-    border-radius:15px;
-
-    margin-bottom:10px;
+.fw-card-role { 
+    font-size: 11px; 
+    font-weight: 600; 
+    text-align: center; 
+    color: #5a5854; 
+    text-transform: uppercase; 
+    margin-bottom: 12px; 
+    letter-spacing: 0.5px; 
 }
 
-#chatForm{
-
-    display:flex;
-    gap:10px;
+.fw-card-foot {
+    font-size: 10px;
+    font-weight: 700;
+    color: #2b6636;
+    border-top: 1px dashed rgba(0,0,0,0.15);
+    padding-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
 }
 
-#prompt{
-
-    flex:1;
-
-    padding:15px;
-
-    border:none;
-
-    outline:none;
-
-    border-radius:15px;
-
-    background:#11111c;
-
-    color:white;
+.fw-card-dot { 
+    width: 6px; 
+    height: 6px; 
+    background: #2b6636; 
+    border-radius: 50%; 
 }
 
-#chatForm button{
-
-    border:none;
-
-    cursor:pointer;
-
-    padding:15px 25px;
-
-    border-radius:15px;
-
-    color:white;
-
-    background:
-    linear-gradient(
-        135deg,
-        var(--purple),
-        var(--pink)
-    );
+/* ==========================================================================
+   6. BAGIAN KONTEN HALAMAN HOME (MANIFESTO & SOSMED)
+   ========================================================================== */
+.section { 
+    margin-bottom: 45px; 
 }
 
-/* ========================= */
-/* FOOTER */
-/* ========================= */
-
-footer{
-
-    padding:40px;
-
-    text-align:center;
-
-    color:#888;
+.section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    color: var(--accent-color);
+    border-left: 4px solid var(--accent-color);
+    padding-left: 10px;
 }
 
-/* ========================= */
-/* MOBILE */
-/* ========================= */
+.about-text {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--sub-text);
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
 
-@media(max-width:768px){
+.social-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+}
 
-    .navbar{
+.social-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 16px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-color);
+    transform: translateY(0);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
 
-        flex-direction:column;
+.social-card:hover { 
+    border-color: var(--accent-color); 
+    transform: translateY(-2px); 
+}
 
-        gap:10px;
-    }
+.social-info { 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    font-weight: 600; 
+}
 
-    .navbar ul{
+.social-handle { 
+    font-size: 13px; 
+    color: var(--sub-text); 
+}
 
-        flex-wrap:wrap;
+.flex-center { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
 
-        justify-content:center;
-    }
+.arrow-icon { 
+    font-size: 12px; 
+    color: var(--sub-text); 
+}
 
-    .hero h1{
+/* ==========================================================================
+   7. INTERFACE ANTARMUKA CHATBOX (VANZZ AI SYSTEM)
+   ========================================================================== */
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        font-size:2.8rem;
-    }
+.profile-name { 
+    font-size: 26px; 
+    font-weight: 700; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
 
-    .section h2{
+.ai-avatar-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 15px;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
 
-        font-size:2rem;
-    }
+.chat-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    height: 450px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
 
-    .avatar-box{
+.chat-box {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-        width:140px;
-        height:140px;
-    }
+.chat-msg {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    word-break: break-word;
+    animation: msgFadeIn 0.25s ease-out forwards;
+}
 
+@keyframes msgFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg.bot {
+    background: var(--border-color);
+    color: var(--text-color);
+    align-self: flex-start;
+    border-top-left-radius: 2px;
+}
+
+.chat-msg.user {
+    background: var(--accent-color);
+    color: #ffffff;
+    align-self: flex-end;
+    border-top-right-radius: 2px;
+}
+
+.chat-input-area {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    background: rgba(0,0,0,0.1);
+    gap: 10px;
+}
+
+#chat-input {
+    flex: 1;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 8px;
+    color: var(--text-color);
+    outline: none;
+    font-size: 14px;
+}
+
+#chat-input:focus { 
+    border-color: var(--accent-color); 
+}
+
+#send-btn {
+    background: var(--accent-color);
+    border: none;
+    color: white;
+    width: 45px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: opacity 0.2s ease;
+}
+
+#send-btn:hover { 
+    opacity: 0.9; 
 }
