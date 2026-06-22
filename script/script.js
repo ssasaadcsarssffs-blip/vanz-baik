@@ -7,7 +7,6 @@ window.addEventListener('DOMContentLoaded', () => {
         if (loadingScreen) {
             loadingScreen.classList.add('fade-out');
         }
-        // Inisialisasi ulang posisi lanyard setelah loading screen hilang
         if (typeof initLanyard === 'function') {
             initLanyard();
         }
@@ -58,7 +57,7 @@ if (themeBtn) {
 }
 
 // ==========================================================================
-// 4. LOGIKA DRAG AND DROP + FISIKA ELASTIS (LETOY/SPRING PHYSICS)
+// 4. LOGIKA DRAG AND DROP + FISIKA ELASTIS + ANTI LAYAR GOYANG
 // ==========================================================================
 const draggable = document.getElementById('draggable-tag');
 const scene = document.getElementById('lanyard-scene');
@@ -66,19 +65,14 @@ const pathL = document.getElementById('l-rope-L');
 const pathR = document.getElementById('l-rope-R');
 const dRing = document.getElementById('l-dring');
 
-// Variabel Posisi & Fisika Karet
 let isDragging = false;
 let offsetX = 0, offsetY = 0;
-
-// Posisi Real-time Kartu saat ini
 let cardX = 0, cardY = 0;
-// Posisi Default (Rumah asal kartu tempat dia harus balik kembali)
-let homeX = 0, homeY = 140;
+let homeX = 0, homeY = 130;
 
-// Variabel Kecepatan untuk kalkulasi ayunan elastis (Spring Physics)
 let vx = 0, vy = 0;
-const spring = 0.045; // Tingkat kekencangan karet (makin kecil makin molor)
-const friction = 0.82; // Redaman ayunan (makin besar makin lama berayunnya)
+const spring = 0.045; 
+const friction = 0.82; 
 
 function initLanyard() {
     if (!draggable || !scene) return;
@@ -86,11 +80,9 @@ function initLanyard() {
     const sRect = scene.getBoundingClientRect();
     const dRect = draggable.getBoundingClientRect();
 
-    // Tentukan titik tengah home area
     homeX = (sRect.width - dRect.width) / 2;
     homeY = 130;
 
-    // Set posisi awal kartu ke posisi home
     cardX = homeX;
     cardY = homeY;
     draggable.style.left = cardX + 'px';
@@ -100,26 +92,20 @@ function initLanyard() {
     animateSpring();
 }
 
-// Fungsi Menggambar Lengkungan Tali SVG secara dinamis
 function updateLanyardPhysics() {
     if (!scene || !pathL || !pathR || !dRing) return;
 
     const sRect = scene.getBoundingClientRect();
-    
-    // Titik tumpuan atas tali lanyard (Gantungan kiri & kanan)
     const anchorLX = sRect.width * 0.38;
     const anchorRX = sRect.width * 0.62;
     const anchorY = 0;
 
-    // Titik tengah lubang d-ring pas di atas kartu id badge
     const cardW = draggable.offsetWidth;
     const targetX = cardX + (cardW / 2);
     const targetY = cardY - 6;
 
-    // Geser besi klip d-ring mengikuti kartu
     dRing.setAttribute('transform', `translate(${targetX}, ${targetY})`);
 
-    // Rumus Kurva Bezier untuk kelenturan tali kiri dan kanan
     const cp1LX = anchorLX;
     const cp1LY = anchorY + (targetY - anchorY) * 0.4;
     const cp2LX = targetX - 25;
@@ -131,13 +117,11 @@ function updateLanyardPhysics() {
     const cp2RY = targetY - 15;
 
     pathL.setAttribute('d', `M ${anchorLX} ${anchorY} C ${cp1LX} ${cp1LY}, ${cp2LX} ${cp2LY}, ${targetX} ${targetY}`);
-    pathR.setAttribute('d', `M ${anchorRX} ${anchorY} C ${cp1RX} ${cp1RY}, ${cp2RX} ${cp2RY}, ${targetX} ${targetY}`);
+    pathR.setAttribute('d', `M ${anchorRX} ${anchorY} C ${cp1RX} ${cp1RY}, ${cp2RX} ${cp2LY}, ${targetX} ${targetY}`);
 }
 
-// Loop Animasi untuk menghitung efek pegas/membal pas dilepas
 function animateSpring() {
     if (!isDragging) {
-        // Rumus Hooke's Law untuk gerak elastis pegas balik ke rumah (homeX, homeY)
         let ax = (homeX - cardX) * spring;
         let ay = (homeY - cardY) * spring;
 
@@ -157,7 +141,6 @@ function animateSpring() {
     requestAnimationFrame(animateSpring);
 }
 
-// Handler Drag & Drop Event (Mouse & HP Touchscreen)
 if (draggable && scene) {
     const startDrag = (e) => {
         isDragging = true;
@@ -172,6 +155,11 @@ if (draggable && scene) {
 
     const doDrag = (e) => {
         if (!isDragging) return;
+
+        // KUNCI LAYAR: Menghentikan browser agar layar HP tidak ikutan gerak naik-turun/kanan-kiri saat ditarik
+        if (e.cancelable) {
+            e.preventDefault();
+        }
         
         const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
         const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
@@ -180,13 +168,12 @@ if (draggable && scene) {
         let newLeft = clientX - sRect.left - offsetX;
         let newTop = clientY - sRect.top - offsetY;
 
-        // Batasi gerakan kartu agar tidak melompat keluar dari kotak sandbox scene
         const maxLeft = sRect.width - draggable.offsetWidth;
         const maxTop = sRect.height - draggable.offsetHeight;
 
         if (newLeft < 0) newLeft = 0;
         if (newLeft > maxLeft) newLeft = maxLeft;
-        if (newTop < 60) newTop = 60; // Batasi atas biar klip d-ring ga ilang keatas
+        if (newTop < 60) newTop = 60; 
         if (newTop > maxTop) newTop = maxTop;
 
         cardX = newLeft;
@@ -202,14 +189,14 @@ if (draggable && scene) {
         isDragging = false;
     };
 
-    // Event listener PC
+    // Event PC
     draggable.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mousemove', doDrag, { passive: false });
     document.addEventListener('mouseup', endDrag);
 
-    // Event listener Layar Sentuh HP
-    draggable.addEventListener('touchstart', startDrag, { passive: true });
-    document.addEventListener('touchmove', doDrag, { passive: true });
+    // Event Layar Sentuh HP (Passive diset ke false agar preventDefault() bekerja mengunci layar)
+    draggable.addEventListener('touchstart', startDrag, { passive: false });
+    document.addEventListener('touchmove', doDrag, { passive: false });
     document.addEventListener('touchend', endDrag);
 
     window.addEventListener('resize', () => {
@@ -221,7 +208,31 @@ if (draggable && scene) {
 }
 
 // ==========================================================================
-// 5. INTEGRASI CHAT INTERFACES CLAUDE DENGAN AUTO PROMPT VANZZ AI
+// 4.B TRIGGER ANIMASI BAR STATISTIK SKILL PAS DI-SCROLL
+// ==========================================================================
+const skillSection = document.querySelector('.skills-container');
+const skillBars = document.querySelectorAll('.skill-bar-fill');
+
+if (skillSection && skillBars.length > 0) {
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Ketika dideteksi scroll sampai ke area skill, bar memanjang sesuai data persen
+                skillBars.forEach(bar => {
+                    const targetWidth = bar.getAttribute('data-width');
+                    bar.style.width = targetWidth;
+                });
+                // Matikan observer setelah animasi jalan sekali
+                skillObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 }); // Trigger jalan saat 20% area kotak skill masuk ke layar
+
+    skillObserver.observe(skillSection);
+}
+
+// ==========================================================================
+// 5. INTEGRASI CHAT INTERFACES CLAUDE VANZZ AI
 // ==========================================================================
 const chatInput = document.getElementById('chat-input');
 const sendBtn = document.getElementById('send-btn');
