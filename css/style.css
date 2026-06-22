@@ -9,6 +9,7 @@
     --sub-text: #9ca3af;
     --border-color: #2e2e38;
     --loading-bg: #050505;
+    --bar-bg: #2e2e38;
 }
 
 [data-theme="light"] {
@@ -19,6 +20,7 @@
     --sub-text: #4b5563;
     --border-color: #e5e7eb;
     --loading-bg: #fafafa;
+    --bar-bg: #e5e7eb;
 }
 
 /* ==========================================================================
@@ -29,7 +31,6 @@
     margin: 0;
     padding: 0;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    /* Transisi global hanya untuk warna background dan teks saja */
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -93,7 +94,6 @@ body {
     align-items: center;
 }
 
-/* Sistem Ganti Halaman */
 .page-section { 
     display: none; 
 }
@@ -352,7 +352,7 @@ body[data-theme="light"] .cube-face {
     text-transform: uppercase; 
 }
 
-/* KARTU ID BADGE PREMIUM (PENTING: Tanpa CSS Transition Koordinat) */
+/* KARTU ID BADGE PREMIUM */
 .fw-avatar-card {
     position: absolute;
     width: 210px;
@@ -364,8 +364,10 @@ body[data-theme="light"] .cube-face {
     cursor: grab;
     user-select: none;
     z-index: 10;
-    /* CRITICAL: JANGAN PERNAH menambahkan transition top atau left di sini, 
-       karena akan membuat kalkulasi fisika pegas/letoy JS crash dan patah-patah! */
+    
+    /* PENTING KUNCI LAYAR HP: Mematikan gerakan scroll bawaan HP khusus saat menyentuh nametag */
+    touch-action: none; 
+    
     transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
@@ -448,7 +450,7 @@ body[data-theme="light"] .cube-face {
 }
 
 /* ==========================================================================
-   6. BAGIAN KONTEN HALAMAN HOME (MANIFESTO & SOSMED)
+   6. BAGIAN KONTEN HALAMAN HOME (MANIFESTO, SKILL & SOSMED)
    ========================================================================== */
 .section { 
     margin-bottom: 45px; 
@@ -474,6 +476,53 @@ body[data-theme="light"] .cube-face {
     border: 1px solid var(--border-color);
 }
 
+/* --- STATISTIK SKILL BAR SYSTEM --- */
+.skills-container {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 25px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.skill-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skill-info-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.skill-info-label .percent {
+    color: var(--accent-color);
+}
+
+.skill-bar-track {
+    width: 100%;
+    height: 10px;
+    background: var(--bar-bg);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.skill-bar-fill {
+    height: 100%;
+    width: 0%; /* Diisi dinamis lewat JS / Animasi */
+    background: linear-gradient(90deg, var(--accent-color), #60a5fa);
+    border-radius: 10px;
+    transition: width 1.5s cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+/* --- SOSMED --- */
 .social-list { 
     display: flex; 
     flex-direction: column; 
